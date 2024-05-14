@@ -1,0 +1,32 @@
+version: "3.7"
+
+services:
+  postgres:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: swe304
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: post
+    healthcheck:
+      test: [ "CMD-SHELL","pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  webapp:
+    build: .
+    image: mkilci2/app:latest
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/swe304
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: post
+    depends_on:
+      - postgres
+
+networks:
+  webapp:
+  postgres:

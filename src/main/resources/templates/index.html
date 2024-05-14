@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Users</title>
+    <style>
+        table {
+            border: solid 1px;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: solid 1px;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        a.button {
+            background-color: #f2f2f2;
+            border: none;
+            color: black;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+
+        /* Add User düğmesinin hover efektini burada tanımlayın (isteğe bağlı) */
+        a.button:hover {
+            background-color: #005f75; /* Daha koyu bir mavi renk */
+        }
+
+        .user-image {
+            width: 50px; /* Resim genişliği */
+            height: 50px; /* Resim yüksekliği */
+            object-fit: cover; /* Resmi kaplayacak şekilde ayarlar */
+            border-radius: 50%; /* Resmi yuvarlar */
+            margin-right: 10px; /* Sağ kenardan boşluk */
+        }
+    </style>
+</head>
+<body>
+
+<a href="/adduser" class="button">Add User</a>
+
+<table>
+    <thead>
+    <tr>
+        <th>NAME</th>
+        <th>ADDRESS</th>
+        <th>IMAGE</th> <!-- Resim sütunu eklendi -->
+        <th>ACTIONS</th> <!-- Yeni eklenen sütun -->
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="user:${users}">
+        <td th:text="${user.name}"></td>
+        <td th:text="${user.address}"></td>
+        <td>
+            <!-- Kullanıcı resmi eklendi -->
+            <img th:src="@{/images/person2.png}" class="user-image" alt="User Image"/>
+        </td>
+        <td>
+            <a th:href="@{'/updateuser?id=' + ${user.id}}" class="button">Update</a>
+            <a th:href="@{'/deleteuser?id=' + ${user.id}}" class="button">Delete</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
