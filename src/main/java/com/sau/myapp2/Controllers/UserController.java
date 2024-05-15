@@ -9,13 +9,21 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
 
 @Controller
 public class UserController {
     @Autowired
     private UserRepository userRepository;
+
+    private static String UPLOADED_FOLDER = "/Users/mervekilci/Downloads/myapp2/src/main/resources/static/images/";
 
     @GetMapping("/usr")
     public String getAllUsers(Model model){
@@ -32,7 +40,17 @@ public class UserController {
     }
 
     @PostMapping("/adduser")
-    public String addUserSubmit(User user) {
+    public String addUserSubmit(User user, @RequestParam("image") MultipartFile file, RedirectAttributes redirectAttributes) {
+        if (!file.isEmpty()){
+            try{
+                byte[] bytes = file.getBytes();
+                Path path = Paths.get(UPLOADED_FOLDER +file.getOriginalFilename());
+                Files.write(path,bytes);
+                user.setImageName("/uploads/" + file.getOriginalFilename());
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+        }
         userRepository.save(user);
         return "redirect:/usr"; // Kullanıcıları listeleme sayfasına yönlendirme
     }

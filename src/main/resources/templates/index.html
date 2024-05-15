@@ -70,8 +70,7 @@
         <td th:text="${user.name}"></td>
         <td th:text="${user.address}"></td>
         <td>
-            <!-- Kullanıcı resmi eklendi -->
-            <img th:src="@{/images/person2.png}" class="user-image" alt="User Image"/>
+            <img th:src="@{${user.img_url}}" class="user-image" alt="User Image"/>
         </td>
         <td>
             <a th:href="@{'/updateuser?id=' + ${user.id}}" class="button">Update</a>
