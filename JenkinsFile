@@ -3,7 +3,7 @@ pipeline {
     
     environment {
         // Gradle ve Java için gerekli yolların belirlenmesi
-        PATH="/mnt/c/Software/gradle-8.7/bin:${env.PATH}"
+        PATH="/Users/mervekilci/.sdkman/candidates/gradle/current/bin:${env.PATH}"
         registry = "mkilci2/app"
         registryCredentials = 'DHub-1'
         dockerImage = ''
