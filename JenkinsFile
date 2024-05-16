@@ -9,19 +9,17 @@ pipeline {
     }
 
     stages {
+        stage('Checkout mp project from GitHub') {
+           steps {
+               git 'https://github.com/merveekilci/devopsProject.git'
+           }
+        }
         stage('Gradle and Java versions') {
             steps {
                 sh './gradlew -v'
                 sh 'java -version'
             }
         }
-
-        stage('Checkout mp project from GitHub') {
-            steps {
-                git 'https://github.com/merveekilci/devopsProject.git'
-            }
-        }
-
         stage('Build jar file') {
             steps {
                 sh './gradlew clean build'
