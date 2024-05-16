@@ -9,10 +9,10 @@ pipeline {
     }
 
     stages {
-        stage('Checkout mp project from GitHub') {
-           steps {
-               git 'https://github.com/merveekilci/devopsProject.git'
-           }
+        stage('Checkout project from GitHub') {
+            steps {
+                git 'https://github.com/merveekilci/devopsProject.git'
+            }
         }
         stage('Gradle and Java versions') {
             steps {
@@ -22,7 +22,7 @@ pipeline {
         }
         stage('Build jar file') {
             steps {
-                sh './gradlew clean build'
+                sh 'gradle clean bootJar'
             }
         }
         stage('Build docker image') {
@@ -33,13 +33,18 @@ pipeline {
             }
         }
 
+        stage('Login to dockerhub') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'DockerAuth', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                }
+            }
+        }
+
         stage('Push the docker image to the hub') {
             steps {
-                script {
-                    docker.withRegistry('', registryCredentials) {
-                        dockerImage.push()
-                    }
-                }
+                sh 'docker push mkilci2/app'
+                echo 'image is pushed'
             }
         }
     }
