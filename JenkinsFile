@@ -1,6 +1,5 @@
 pipeline {
     agent any
-    
     environment {
         // Gradle ve Java için gerekli yolların belirlenmesi
         PATH="/Users/mervekilci/.sdkman/candidates/gradle/current/bin:${env.PATH}"
