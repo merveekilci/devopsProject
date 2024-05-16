@@ -5,7 +5,7 @@ pipeline {
         // Gradle ve Java için gerekli yolların belirlenmesi
         PATH="/Users/mervekilci/.sdkman/candidates/gradle/current/bin:${env.PATH}"
         registry = "mkilci2/app"
-        registryCredentials = 'DHub-1'
+        registryCredentials = 'DockerAuth'
         dockerImage = ''
     }
 
