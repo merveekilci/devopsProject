@@ -1,43 +1,54 @@
- pipeline {
-     agent any
-     environment {
-         DOCKERHUB_CREDENTIALS = credentials('DockerAuth')
-     }
+pipeline {
+    agent any
+    
+    environment {
+        // Gradle ve Java için gerekli yolların belirlenmesi
+        PATH="/mnt/c/Software/gradle-6.8.3/bin:${env.PATH}"
+        registry = "mkilci2/app"
+        registryCredentials = 'DHub-1'
+        dockerImage = ''
+    }
 
-     stages {
-         stage('Pull the project from GitHub') {
-             steps {
-                 echo 'Getting the project from GitHub'
-                  git 'https://github.com/merveekilci/devopsProject.git'
-             }
-         }
+    stages {
+        stage('Gradle and Java versions') {
+            steps {
+                sh './gradlew -v'
+                sh 'java -version'
+            }
+        }
 
-         stage('Building the jar file') {
-             steps {
-                 echo 'Start building the jar'
-                 sh 'gradle clean bootJar'
-             }
-         }
+        stage('Checkout mp project from GitHub') {
+            steps {
+                git 'https://github.com/merveekilci/devopsProject.git'
+            }
+        }
 
-         stage('Create the Docker image of the application') {
-             steps {
-                 echo 'Image has been built'
-                 sh 'docker build -t mkilci2/app .'
-             }
-         }
+        stage('Build jar file') {
+            steps {
+                sh './gradlew clean build'
+            }
+        }
+        stage('Build docker image') {
+            steps {
+                script {
+                    dockerImage = docker.build registry
+                }
+            }
+        }
 
-         stage('Login to DockerHub') {
-             steps {
-                 sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-                 echo 'Logged in'
-             }
-         }
-         stage('Push the image to DockerHub') {
-             steps {
-                 sh 'docker push mkilci2/app'
-                 echo 'The image is pushed'
-             }
-         }
-
-     }
- }
+        stage('Push the docker image to the hub') {
+            steps {
+                script {
+                    docker.withRegistry('', registryCredentials) {
+                        dockerImage.push()
+                    }
+                }
+            }
+        }
+    }
+    post {
+        success {
+            echo 'Everything is fine.'
+        }
+    }
+}
